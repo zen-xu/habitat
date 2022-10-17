@@ -1,9 +1,9 @@
-comment_width = 110
-max_width = 110
-inline_attribute_width = 80
+reorder_impl_items = true
 overflow_delimited_expr = true
 newline_style = "Unix"
+max_width = 110
+inline_attribute_width = 80
 imports_granularity = "Crate"
-reorder_impl_items = true
 fn_single_line = false
+comment_width = 110
 blank_lines_upper_bound = 2
