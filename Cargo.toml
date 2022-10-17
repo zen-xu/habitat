@@ -1,0 +1,11 @@
+[package]
+name = "habitat"
+version = "0.1.0-beta"
+edition = "2021"
+
+[workspace]
+members = ["controller"]
+
+[[bin]]
+name = "controller"
+path = "controller/src/main.rs"
