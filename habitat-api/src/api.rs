@@ -11,8 +11,6 @@ const K8S_DEFAULT_SCHEDULER: &str = "default-scheduler";
 pub struct JobSpec {
     #[serde(default = "default_scheduler")]
     scheduler: String,
-    queue: Option<String>,
-    ttl_seconds_after_finished: Option<u32>,
 }
 
 fn default_scheduler() -> String {
