@@ -73,7 +73,6 @@ pub struct PodMeta {
     pub labels: Option<std::collections::BTreeMap<String, String>>,
 }
 
-
 #[derive(Deserialize, Serialize, Clone, Debug, Default, JsonSchema)]
 pub struct PodSpec {
     /// Optional duration in seconds the pod may be active on the node relative

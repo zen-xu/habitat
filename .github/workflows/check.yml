@@ -6,21 +6,22 @@ name: check
 jobs:
   fmt:
     runs-on: ubuntu-latest
-    name: stable / fmt
+    name: nightly / fmt
     steps:
       - uses: actions/checkout@v3
         with:
           submodules: true
-      - name: Install stable
+      - name: Install nightly
         uses: actions-rs/toolchain@v1
         with:
           profile: minimal
-          toolchain: stable
+          toolchain: nightly
           components: rustfmt
       - name: cargo fmt --check
         uses: actions-rs/cargo@v1
         with:
           command: fmt
+          toolchain: nightly
           args: --check
   clippy:
     runs-on: ubuntu-latest
