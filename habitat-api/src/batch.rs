@@ -35,20 +35,47 @@ pub struct JobSpec {
 
 #[derive(Deserialize, Serialize, Clone, Debug, JsonSchema)]
 pub struct JobStatus {
+    /// Job status phase.
     pub phase: JobStatusPhase,
+
+    /// Represents the time when the job status phase became `Running`. It is represented in RFC3339 form
+    /// and is in UTC.
+    pub start_time: Option<k8s_openapi::apimachinery::pkg::apis::meta::v1::Time>,
+
+    /// Represents the time when the job was completed (). It is represented in RFC3339 form and is in UTC.
+    pub completion_time: Option<k8s_openapi::apimachinery::pkg::apis::meta::v1::Time>,
+
+    /// The number of pods which reached phase `Pending`.
+    pub pending: Option<u32>,
+
+    /// The number of pods which reached phase `Running`.
+    pub running: Option<u32>,
+
+    /// The number of pods which reached phase `Terminating`.
+    pub terminating: Option<u32>,
+
+    /// The number of pods which reached phase `Succeeded`.
+    pub succeeded: Option<u32>,
+
+    /// The number of pods which reached phase `Failed`.    
+    pub failed: Option<u32>,
 }
 
 #[derive(Deserialize, Serialize, Clone, Debug, JsonSchema)]
 pub enum JobStatusPhase {
+    /// Pending means the job has been accepted by the system, but one or more of pods has not been
+    /// scheduled.
     Pending,
-    Aborting,
-    Aborted,
+    /// Running means that if the job contains any `Running` pod, its status will be `Running`.
     Running,
-    Restarting,
-    Completing,
+    /// Terminating means that the job is terminated, and waiting for releasing pods.
     Terminating,
-    Terminated,
+    /// Succeeded means that the job is completed with success.
+    Succeeded,
+    /// Succeeded means that the job is completed with failure.
     Failed,
+    /// Terminated means that the job is completed with unexpected.
+    Terminated,
 }
 
 #[derive(Deserialize, Serialize, Clone, Debug, Default, JsonSchema)]
