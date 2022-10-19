@@ -4,8 +4,14 @@ use serde::{Deserialize, Serialize};
 
 #[derive(CustomResource, Deserialize, Serialize, Clone, Debug, JsonSchema)]
 #[serde(rename_all = "camelCase")]
-#[kube(kind = "Job", group = "batch.habitat", version = "beta1", namespaced)]
-#[kube(status = "JobStatus", shortname = "hj")]
+#[kube(
+    namespaced,
+    kind = "Job",
+    group = "batch.habitat",
+    version = "beta1",
+    shortname = "hj",
+    status = "JobStatus"
+)]
 pub struct JobSpec {
     /// If specified, the pod will be dispatched by specified scheduler.
     /// If not specified, the pod will be dispatched by default scheduler.
