@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 
 #[derive(CustomResource, Deserialize, Serialize, Clone, Debug, JsonSchema)]
 #[serde(rename_all = "camelCase")]
-#[kube(kind = "Job", group = "habitat.dev", version = "beta1", namespaced)]
+#[kube(kind = "Job", group = "batch.habitat", version = "beta1", namespaced)]
 #[kube(status = "JobStatus", shortname = "hj")]
 pub struct JobSpec {
     /// If specified, the pod will be dispatched by specified scheduler.
