@@ -10,7 +10,16 @@ use serde::{Deserialize, Serialize};
     group = "batch.habitat",
     version = "beta1",
     shortname = "hj",
-    status = "JobStatus"
+    status = "JobStatus",
+    printcolumn = r#"{"name": "Pending", "jsonPath": ".status.pending", "type": "integer", "priority": 1}"#,
+    printcolumn = r#"{"name": "Running", "jsonPath": ".status.running", "type": "integer", "priority": 1}"#,
+    printcolumn = r#"{"name": "Terminating", "jsonPath": ".status.terminating", "type": "integer", "priority": 1}"#,
+    printcolumn = r#"{"name": "Succeeded", "jsonPath": ".status.succeeded", "type": "integer", "priority": 1}"#,
+    printcolumn = r#"{"name": "Failed", "jsonPath": ".status.failed", "type": "integer", "priority": 1}"#,
+    printcolumn = r#"{"name": "Status", "jsonPath": ".status.phase", "type": "string", "priority": 0}"#,
+    printcolumn = r#"{"name": "Start_Time", "jsonPath": ".status.startTime", "type": "string", "priority": 0}"#,
+    printcolumn = r#"{"name": "Completion_Time", "jsonPath": ".status.completionTime", "type": "string", "priority": 0}"#,
+    printcolumn = r#"{"name": "Age", "jsonPath": ".metadata.creationTimestamp", "type": "date", "priority": 0}"#
 )]
 pub struct JobSpec {
     /// If specified, the pod will be dispatched by specified scheduler.
