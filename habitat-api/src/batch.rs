@@ -27,7 +27,7 @@ pub struct JobSpec {
     pub min_parallelism: u32,
 
     /// If specified, indicates the Job's priority.
-    pub priority_class_name: String,
+    pub priority_class_name: Option<String>,
 
     /// The priority value.
     ///
