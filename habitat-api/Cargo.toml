@@ -18,4 +18,4 @@ default-features = false
 
 [[bin]]
 name = "crdgen"
-path = "src/main.rs"
+path = "src/crdgen.rs"
