@@ -87,7 +87,7 @@ pub enum JobStatusPhase {
 #[derive(Deserialize, Serialize, Clone, Debug, Default, JsonSchema)]
 pub struct PodTemplate {
     /// Pod metadata
-    pub metadata: PodMeta,
+    pub metadata: Option<PodMeta>,
 
     /// Specification of the desired behavior of the pod.
     pub spec: PodSpec,
