@@ -1,7 +1,11 @@
 [package]
 name = "habitat-api"
 version = "0.1.0"
+description = "habitat API"
 edition = "2021"
+license = "Apache-2.0"
+authors = ["ZhengYu Xu <zen-xu@outlook.com>"]
+repository = "https://github.com/zen-xu/habitat"
 
 [dependencies]
 kube = { version = "0.75", features = ["runtime", "derive", "client"] }
