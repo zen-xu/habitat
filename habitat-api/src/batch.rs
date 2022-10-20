@@ -47,7 +47,7 @@ pub struct JobSpec {
     pub template: PodTemplate,
 }
 
-#[derive(Deserialize, Serialize, Clone, Debug, JsonSchema)]
+#[derive(Deserialize, Serialize, Clone, Debug, Default, JsonSchema)]
 pub struct JobStatus {
     /// Job status phase.
     pub phase: JobStatusPhase,
@@ -80,6 +80,8 @@ pub enum JobStatusPhase {
     // Pending means the job has been accepted by the system, but one or more of pods has not been
     // scheduled.
     Pending,
+    // Ready means the scheduler approves the controller to create pods.
+    Ready,
     // Running means that if the job contains any `Running` pod, its status will be `Running`.
     Running,
     // Terminating means that the job is terminated, and waiting for releasing pods.
@@ -90,6 +92,10 @@ pub enum JobStatusPhase {
     Failed,
     // Terminated means that the job is completed with unexpected.
     Terminated,
+}
+
+impl Default for JobStatusPhase {
+    fn default() -> Self { Self::Pending }
 }
 
 #[derive(Deserialize, Serialize, Clone, Debug, Default, JsonSchema)]
