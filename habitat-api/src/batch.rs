@@ -60,19 +60,19 @@ pub struct JobStatus {
     pub completion_time: Option<k8s_openapi::apimachinery::pkg::apis::meta::v1::Time>,
 
     /// The number of pods which reached phase `Pending`.
-    pub pending: Option<u32>,
+    pub pending: u32,
 
     /// The number of pods which reached phase `Running`.
-    pub running: Option<u32>,
+    pub running: u32,
 
     /// The number of pods which reached phase `Terminating`.
-    pub terminating: Option<u32>,
+    pub terminating: u32,
 
     /// The number of pods which reached phase `Succeeded`.
-    pub succeeded: Option<u32>,
+    pub succeeded: u32,
 
     /// The number of pods which reached phase `Failed`.    
-    pub failed: Option<u32>,
+    pub failed: u32,
 }
 
 #[derive(Deserialize, Serialize, Clone, Debug, JsonSchema)]
