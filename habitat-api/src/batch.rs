@@ -10,6 +10,7 @@ use serde::{Deserialize, Serialize};
     group = "batch.habitat",
     version = "beta1",
     shortname = "hj",
+    shortname = "hjob",
     status = "JobStatus",
     printcolumn = r#"{"name": "Pending", "jsonPath": ".status.pending", "type": "integer", "priority": 1}"#,
     printcolumn = r#"{"name": "Running", "jsonPath": ".status.running", "type": "integer", "priority": 1}"#,
