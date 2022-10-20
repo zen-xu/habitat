@@ -18,8 +18,6 @@ use serde::{Deserialize, Serialize};
     printcolumn = r#"{"name": "Succeeded", "jsonPath": ".status.succeeded", "type": "integer", "priority": 1}"#,
     printcolumn = r#"{"name": "Failed", "jsonPath": ".status.failed", "type": "integer", "priority": 1}"#,
     printcolumn = r#"{"name": "Status", "jsonPath": ".status.phase", "type": "string", "priority": 0}"#,
-    printcolumn = r#"{"name": "Start_Time", "jsonPath": ".status.startTime", "type": "string", "priority": 0}"#,
-    printcolumn = r#"{"name": "Completion_Time", "jsonPath": ".status.completionTime", "type": "string", "priority": 0}"#,
     printcolumn = r#"{"name": "Age", "jsonPath": ".metadata.creationTimestamp", "type": "date", "priority": 0}"#
 )]
 pub struct JobSpec {
