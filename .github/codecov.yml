@@ -15,7 +15,7 @@ coverage:
 ignore:
   - "tests"
   - "**/main.rs"
-  - "habitat-api/src/api.rs"
+  - "habitat-api"
 
 # Make comments less noisy
 comment:
