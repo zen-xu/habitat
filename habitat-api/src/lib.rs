@@ -1,4 +1,4 @@
-pub mod api;
+pub mod batch;
 
 /// Generated type, for crdgen
-pub use api::Job;
+pub use batch::Job;
