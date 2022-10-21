@@ -66,7 +66,7 @@ jobs:
             rg "rust-version" ./*/Cargo.toml
             exit 1
           fi
-          if ! cat kube/Cargo.toml | grep "rust-version" | grep "${{ steps.msrv.outputs.msrv }}"; then
+          if ! cat habitat-api/Cargo.toml | grep "rust-version" | grep "${{ steps.msrv.outputs.msrv }}"; then
             echo "msrv policy inconsistent with rust-version key"
             exit 1
           fi
