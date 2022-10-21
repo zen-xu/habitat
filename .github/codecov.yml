@@ -1,3 +1,7 @@
 comment:
   require_changes: no
   layout: "diff,files"
+
+ignore:
+  - "**/main.rs"
+  - "habitat-api"
