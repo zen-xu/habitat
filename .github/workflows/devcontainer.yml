@@ -1,0 +1,26 @@
+name: devcontainer
+
+# When a pull request is opened that changes the Devcontainer configuration,
+# ensure that the container continues to build properly.
+on:
+  pull_request:
+    paths:
+      - .devcontainer/**
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    if: ${{ github.repository_owner == 'zen-xu' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: docker build .devcontainer -t zenxu/habitat-devcontainer:latest
+      - run: |
+          echo $DOCKER_TOKEN | docker login -u zenxu --password-stdin
+          docker push zenxu/habitat-devcontainer:latest
+        if: github.ref == 'refs/heads/main'
