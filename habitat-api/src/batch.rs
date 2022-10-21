@@ -8,7 +8,7 @@ use serde::{Deserialize, Serialize};
     namespaced,
     kind = "Job",
     group = "batch.habitat",
-    version = "beta1",
+    version = "v1beta1",
     shortname = "hj",
     shortname = "hjob",
     status = "JobStatus",

@@ -20,10 +20,10 @@ webhooks:
     rules:
       - operations: ["CREATE", "UPDATE"]
         apiGroups: ["batch.habitat"]
-        apiVersions: ["beta1"]
+        apiVersions: ["v1beta1"]
         resources: ["jobs"]
     failurePolicy: Fail
-    admissionReviewVersions: ["v1", "beta1"]
+    admissionReviewVersions: ["v1", "v1beta1"]
     sideEffects: None
     timeoutSeconds: 5
 ---
@@ -48,9 +48,9 @@ webhooks:
     rules:
       - operations: ["CREATE", "UPDATE"]
         apiGroups: ["batch.habitat"]
-        apiVersions: ["beta1"]
+        apiVersions: ["v1beta1"]
         resources: ["jobs"]
     failurePolicy: Fail
-    admissionReviewVersions: ["v1", "beta1"]
+    admissionReviewVersions: ["v1", "v1beta1"]
     sideEffects: None
     timeoutSeconds: 5
