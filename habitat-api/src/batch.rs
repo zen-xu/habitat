@@ -27,12 +27,7 @@ pub struct JobSpec {
 
     /// Specifies the maximum desired number of pods the job should run at any
     /// given time.
-    #[serde(default = "default_parallelism")]
-    pub parallelism: u32,
-
-    /// Specifies the minimum desired number of pods the job should run.
-    #[serde(default = "default_parallelism")]
-    pub min_parallelism: u32,
+    pub parallelism: ParallelismSpec,
 
     /// If specified, indicates the Job's priority.
     pub priority_class_name: Option<String>,
@@ -352,3 +347,15 @@ pub struct PodSpec {
 }
 
 fn default_parallelism() -> u32 { 1 }
+
+#[derive(Deserialize, Serialize, Clone, Debug, JsonSchema)]
+pub struct ParallelismSpec {
+    /// Specifies the minimum desired number of pods the job should run.
+    #[serde(default = "default_parallelism")]
+    pub min: u32,
+
+    /// Specifies the maximum desired number of pods the job should run at any
+    /// given time.
+    #[serde(default = "default_parallelism")]
+    pub max: u32,
+}
