@@ -1,4 +1,10 @@
 #!/usr/bin/env bash
+
+NAMESPACE=
+if [[ -n "$1" ]]; then
+    NAMESPACE=$1
+fi
+
 set -euo pipefail
 
 # This script is loosely adapting the TLS setup described in
@@ -8,14 +14,18 @@ set -euo pipefail
 # Require: a private ip reachable from your cluster.
 # If using k3d to test locally, then probably 10.x.x.x or 192.168.X.X
 # When running behind a Service in-cluster; 0.0.0.0
-test -n "${ADMISSION_PRIVATE_IP}"
+if [[ -n "${NAMESPACE}" ]]; then
+    ADMISSION_PRIVATE_IP="0.0.0.0"
+else
+    test -n "${ADMISSION_PRIVATE_IP}"
+fi
 
 # Cleanup: Remove old config if exists (immutable)
 kubectl delete mutatingwebhookconfiguration habitat-admission-controller || true
 kubectl delete validatingwebhookconfigurations habitat-admission-controller || true
 
-# If behind a service:
-#kubectl -n default delete secret habitat-admission-controller-tls || true
+# If behind a service, delete secret:
+[[ -n "${NAMESPACE}" ]] && kubectl -n default delete secret habitat-admission-controller-tls || true
 
 # Create cache dir to save CA certs
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
@@ -23,9 +33,12 @@ CACHE_DIR=$SCRIPT_DIR/caches
 mkdir -p $CACHE_DIR
 
 # Get your IP into the cert
-echo "subjectAltName = IP:${ADMISSION_PRIVATE_IP}" > $CACHE_DIR/admission_extfile.cnf
-# Or, if using DNS (e.g. when running behind a service):
-#echo "subjectAltName = DNS:habitat-admission-controller.default.svc" > $CACHE_DIR/admission_extfile.cnf
+if [[ -n "${NAMESPACE}" ]]; then
+    # if using DNS (e.g. when running behind a service):
+    echo "subjectAltName = DNS:habitat-admission-controller.$NAMESPACE.svc" > $CACHE_DIR/admission_extfile.cnf
+else
+    echo "subjectAltName = IP:${ADMISSION_PRIVATE_IP}" > $CACHE_DIR/admission_extfile.cnf
+fi
 
 # Generate the CA cert and private key
 openssl req -nodes -new -x509 \
@@ -43,17 +56,21 @@ openssl req -new -key $CACHE_DIR/admission-controller-tls.key \
         -CAcreateserial -out $CACHE_DIR/admission-controller-tls.crt \
         -extfile $CACHE_DIR/admission_extfile.cnf
 
-CA_PEM64="$(openssl base64 -A < $CACHE_DIR/admission-controller-tls.crt)"
-# shellcheck disable=SC2016
-sed -e 's@${CA_PEM_B64}@'"$CA_PEM64"'@g' < admission_controller.yml.tpl |
-    sed -e 's@${PRIVATE_IP}@'"$ADMISSION_PRIVATE_IP"'@g'  \
-    | kubectl create -f -
-
-# if behind a service:
-#kubectl -n default create secret tls habitat-admission-controller-tls \
-#    --cert $CACHE_DIR/admission-controller-tls.crt \
-#    --key $CACHE_DIR/admission-controller-tls.key
-# similar guide: https://www.openpolicyagent.org/docs/v0.11.0/kubernetes-admission-control/
+if [[ -n "${NAMESPACE}" ]]; then
+    # if behind a service:
+    kubectl -n $NAMESPACE create secret tls habitat-admission-controller-tls \
+        --cert $CACHE_DIR/admission-controller-tls.crt \
+        --key $CACHE_DIR/admission-controller-tls.key
+    sed -e 's@${NAMESPACE}@'"$NAMESPACE"'@g' < admission_controller.svc.yml.tpl |
+        kubectl create -f -
+    # similar guide: https://www.openpolicyagent.org/docs/v0.11.0/kubernetes-admission-control/
+else
+    CA_PEM64="$(openssl base64 -A < $CACHE_DIR/admission-controller-tls.crt)"
+    # shellcheck disable=SC2016
+    sed -e 's@${CA_PEM_B64}@'"$CA_PEM64"'@g' < admission_controller.yml.tpl |
+        sed -e 's@${PRIVATE_IP}@'"$ADMISSION_PRIVATE_IP"'@g'  \
+        | kubectl create -f -
+fi
 
 # Sanity:
 kubectl get mutatingwebhookconfiguration habitat-admission-controller -oyaml

@@ -117,9 +117,20 @@ jobs:
       - name: Build workspace
         run: cargo build
 
-      # Run the equivalent of `just integration`
-      - name: Run all default features integration library tests
-        run: cargo test --lib --all -- --ignored
+      # - name: Install habitat CRDs
+      #   run: cargo run -p habitat-api | kubectl apply -f -
+
+      # - name: Setup mutating and validating webhook configuration
+      #   run: |
+      #     export ADMISSION_PRIVATE_IP=$(ifconfig | sed -En 's/127.0.0.1//;s/.*inet (addr:)?(([0-9]*\.){3}[0-9]*).*/\2/p' | head -n 1)
+      #     cd habitat-admission && ./admission_setup.sh
+
+      # - name: Run all default features integration library tests
+      #   run: |
+      #     export ADMISSION_PRIVATE_IP=$(ifconfig | sed -En 's/127.0.0.1//;s/.*inet (addr:)?(([0-9]*\.){3}[0-9]*).*/\2/p' | head -n 1)
+      #     export ADMISSION_CERT=habitat-admission/caches/admission-controller-tls.crt
+      #     export ADMISSION_KEY=habitat-admission/caches/admission-controller-tls.key
+      #     cargo test --all -- --ignored --test-threads 1
 
   mk8sv:
     # compile check e2e tests against mk8sv

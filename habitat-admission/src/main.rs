@@ -35,18 +35,22 @@ async fn main() {
 async fn run(ip_addr: std::net::IpAddr, port: u32, cert_path: PathBuf, key_path: PathBuf) {
     let addr = format!("{}:{}", ip_addr, port);
 
-    let mutate = warp::path("mutate")
+    let healthy = warp::get().and(warp::path("health")).map(|| "healthy");
+
+    let mutate = warp::post()
+        .and(warp::path("mutate"))
         .and(warp::body::json())
         .and_then(crate::mutate::handler)
         .with(warp::trace::request());
 
-    let validate = warp::path("validate")
+    let validate = warp::post()
+        .and(warp::path("validate"))
         .and(warp::body::json())
         .and_then(crate::validate::handler)
         .with(warp::trace::request());
 
     info!("starting habitat admission controller");
-    warp::serve(warp::post().and(mutate.or(validate)))
+    warp::serve(healthy.or(mutate).or(validate))
         .tls()
         .cert_path(cert_path)
         .key_path(key_path)
@@ -79,7 +83,6 @@ mod test {
         let fut = tokio::spawn(async move {
             run(ip_addr, 8443, server_cert, server_key).await;
         });
-        tokio::time::sleep(Duration::from_secs(1)).await;
 
         let jobs: Api<batch::Job> = Api::default_namespaced(client.clone());
 

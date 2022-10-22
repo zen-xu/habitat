@@ -6,8 +6,10 @@ metadata:
 webhooks:
   - name: admission-controller.habitat.svc
     clientConfig:
-      caBundle: "${CA_PEM_B64}"
-      url: "https://${PRIVATE_IP}:8443/mutate"
+      service:
+        name: habitat-admission-controller-tls
+        namespace: ${NAMESPACE}
+        path: "/mutate"
     rules:
       - operations: ["CREATE", "UPDATE"]
         apiGroups: ["batch.habitat"]
@@ -25,8 +27,10 @@ metadata:
 webhooks:
   - name: admission-controller.habitat.svc
     clientConfig:
-      caBundle: "${CA_PEM_B64}"
-      url: "https://${PRIVATE_IP}:8443/validate"
+      service:
+        name: habitat-admission-controller-tls
+        namespace: ${NAMESPACE}
+        path: "/validate"
     rules:
       - operations: ["CREATE", "UPDATE"]
         apiGroups: ["batch.habitat"]
