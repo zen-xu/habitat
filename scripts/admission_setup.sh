@@ -28,8 +28,7 @@ kubectl delete validatingwebhookconfigurations habitat-admission-controller || t
 [[ -n "${NAMESPACE}" ]] && kubectl -n default delete secret habitat-admission-controller-tls || true
 
 # Create cache dir to save CA certs
-SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-CACHE_DIR=$SCRIPT_DIR/caches
+CACHE_DIR=caches
 mkdir -p $CACHE_DIR
 
 # Get your IP into the cert
@@ -61,13 +60,13 @@ if [[ -n "${NAMESPACE}" ]]; then
     kubectl -n $NAMESPACE create secret tls habitat-admission-controller-tls \
         --cert $CACHE_DIR/admission-controller-tls.crt \
         --key $CACHE_DIR/admission-controller-tls.key
-    sed -e 's@${NAMESPACE}@'"$NAMESPACE"'@g' < admission_controller.svc.yml.tpl |
+    sed -e 's@${NAMESPACE}@'"$NAMESPACE"'@g' < scripts/admission_controller.svc.yml.tpl |
         kubectl create -f -
     # similar guide: https://www.openpolicyagent.org/docs/v0.11.0/kubernetes-admission-control/
 else
     CA_PEM64="$(openssl base64 -A < $CACHE_DIR/admission-controller-tls.crt)"
     # shellcheck disable=SC2016
-    sed -e 's@${CA_PEM_B64}@'"$CA_PEM64"'@g' < admission_controller.yml.tpl |
+    sed -e 's@${CA_PEM_B64}@'"$CA_PEM64"'@g' < scripts/admission_controller.yml.tpl |
         sed -e 's@${PRIVATE_IP}@'"$ADMISSION_PRIVATE_IP"'@g'  \
         | kubectl create -f -
 fi

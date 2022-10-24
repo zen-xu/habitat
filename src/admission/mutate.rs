@@ -1,4 +1,4 @@
-use habitat_api::Job;
+use crate::api::Job;
 use kube::core::{
     admission::{AdmissionRequest, AdmissionResponse, AdmissionReview},
     ResourceExt,
@@ -25,7 +25,7 @@ pub async fn handler(body: AdmissionReview<Job>) -> Result<impl Reply, Infallibl
     // req.Object always exists for us, but could be None if extending to DELETE events
     if let Some(obj) = req.object {
         let name = obj.name_any(); // apiserver may not have generated a name yet
-        res = match validate(res.clone(), &obj) {
+        res = match mutate(res.clone(), &obj) {
             Ok(res) => {
                 info!("accepted: {:?} on Job {}", req.operation, name);
                 res
@@ -41,16 +41,4 @@ pub async fn handler(body: AdmissionReview<Job>) -> Result<impl Reply, Infallibl
 }
 
 // The main handler and core business logic, failures here implies rejected applies
-fn validate(res: AdmissionResponse, obj: &Job) -> Result<AdmissionResponse, Box<dyn Error>> {
-    // If the minParallelism > parallelism, we reject it.
-    if obj.spec.parallelism.min > obj.spec.parallelism.max {
-        return Err("parallelism.min can't greater than parallelism.max".into());
-    }
-
-    // Only one of `priority_class_name` or `priority` can be specified.
-    if obj.spec.priority_class_name.is_some() && obj.spec.priority.is_some() {
-        return Err("can't specify both priority and priorityClassName".into());
-    }
-
-    Ok(res)
-}
+fn mutate(res: AdmissionResponse, _job: &Job) -> Result<AdmissionResponse, Box<dyn Error>> { Ok(res) }
