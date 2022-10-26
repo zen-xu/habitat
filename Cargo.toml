@@ -1,2 +1,6 @@
 [workspace]
-members = ["habitat-admission", "habitat-api", "habitat-controller"]
+members = [
+    "crates/habitat-admission",
+    "crates/habitat-api",
+    "crates/habitat-controller",
+]
