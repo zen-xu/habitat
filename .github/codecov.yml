@@ -3,5 +3,5 @@ comment:
   layout: "diff,files"
 
 ignore:
-  - "**/main.rs"
-  - "habitat-api"
+  - "cli"
+  - "crates/habitat-api"
