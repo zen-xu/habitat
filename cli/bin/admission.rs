@@ -4,8 +4,6 @@ use clap::Parser;
 use tracing::*;
 use warp::Filter;
 
-use habitat::admission;
-
 
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
@@ -39,13 +37,13 @@ async fn run(ip_addr: std::net::IpAddr, port: u32, cert_path: PathBuf, key_path:
     let mutate = warp::post()
         .and(warp::path("mutate"))
         .and(warp::body::json())
-        .and_then(admission::mutate::handler)
+        .and_then(habitat_admission::mutate::handler)
         .with(warp::trace::request());
 
     let validate = warp::post()
         .and(warp::path("validate"))
         .and(warp::body::json())
-        .and_then(admission::validate::handler)
+        .and_then(habitat_admission::validate::handler)
         .with(warp::trace::request());
 
     info!("starting habitat admission controller");
