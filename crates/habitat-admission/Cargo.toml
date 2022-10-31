@@ -12,7 +12,7 @@ repository = "https://github.com/zen-xu/habitat"
 anyhow = "1"
 habitat-api = { path = "../habitat-api", version = "<1.0.0" }
 json-patch = "0.2"
-kube = { version = "0.75", default-features = false, features = ["admission"] }
+kube = { version = "0.76", default-features = false, features = ["admission"] }
 serde = "1"
 serde_json = "1"
 tracing = "0.1"

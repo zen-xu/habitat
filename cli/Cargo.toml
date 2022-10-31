@@ -15,7 +15,7 @@ habitat-controller = { path = "../crates/habitat-controller", version = "<1.0.0"
 
 # third party dependencies
 clap = { version = "4", features = ["derive"] }
-kube = { version = "0.75", features = ["derive"] }
+kube = { version = "0.76", features = ["derive"] }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 serde_yaml = "0.9"
