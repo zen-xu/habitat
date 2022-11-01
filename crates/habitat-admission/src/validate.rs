@@ -42,6 +42,10 @@ pub async fn handler(body: AdmissionReview<Job>) -> Result<impl Reply, Infallibl
 
 // The main handler and core business logic, failures here implies rejected applies
 fn validate(res: AdmissionResponse, obj: &Job) -> Result<AdmissionResponse, Box<dyn Error>> {
+    if obj.spec.tasks.is_empty() {
+        return Err("no task specified".into());
+    }
+
     // If the task parallelism.min > parallelism.max, we reject it.
     for task in obj.spec.tasks.iter() {
         if task.parallelism.min > task.parallelism.max {
