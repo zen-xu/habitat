@@ -37,17 +37,15 @@ async fn run(ip_addr: std::net::IpAddr, port: u32, cert_path: PathBuf, key_path:
     let mutate = warp::post()
         .and(warp::path("mutate"))
         .and(warp::body::json())
-        .and_then(habitat_admission::mutate::handler)
-        .with(warp::trace::request());
+        .and_then(habitat_admission::mutate::handler);
 
     let validate = warp::post()
         .and(warp::path("validate"))
         .and(warp::body::json())
-        .and_then(habitat_admission::validate::handler)
-        .with(warp::trace::request());
+        .and_then(habitat_admission::validate::handler);
 
     info!("starting habitat admission controller");
-    warp::serve(healthy.or(mutate).or(validate))
+    warp::serve(healthy.or(mutate).or(validate).with(warp::trace::request()))
         .tls()
         .cert_path(cert_path)
         .key_path(key_path)
