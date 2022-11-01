@@ -42,9 +42,15 @@ pub async fn handler(body: AdmissionReview<Job>) -> Result<impl Reply, Infallibl
 
 // The main handler and core business logic, failures here implies rejected applies
 fn validate(res: AdmissionResponse, obj: &Job) -> Result<AdmissionResponse, Box<dyn Error>> {
-    // If the minParallelism > parallelism, we reject it.
-    if obj.spec.parallelism.min > obj.spec.parallelism.max {
-        return Err("parallelism.min can't greater than parallelism.max".into());
+    // If the task parallelism.min > parallelism.max, we reject it.
+    for task in obj.spec.tasks.iter() {
+        if task.parallelism.min > task.parallelism.max {
+            return Err(format!(
+                "task `{}` parallelism.min can't greater than parallelism.max",
+                task.name
+            )
+            .into());
+        }
     }
 
     // Only one of `priority_class_name` or `priority` can be specified.
