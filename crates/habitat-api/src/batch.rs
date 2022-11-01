@@ -34,7 +34,7 @@ pub struct JobSpec {
     /// specified.
     pub priority: Option<u32>,
 
-    /// The task specifications。
+    /// The task specifications.
     pub tasks: Vec<TaskSpec>,
 }
 
