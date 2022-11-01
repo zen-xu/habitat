@@ -25,10 +25,6 @@ pub struct JobSpec {
     /// If not specified, the pod will be dispatched by default scheduler.
     pub scheduler_name: Option<String>,
 
-    /// Specifies the maximum desired number of pods the job should run at any
-    /// given time.
-    pub parallelism: ParallelismSpec,
-
     /// If specified, indicates the Job's priority.
     pub priority_class_name: Option<String>,
 
@@ -38,8 +34,8 @@ pub struct JobSpec {
     /// specified.
     pub priority: Option<u32>,
 
-    /// The pod template.
-    pub template: PodTemplate,
+    /// The task specifications.
+    pub tasks: Vec<TaskSpec>,
 }
 
 #[derive(Deserialize, Serialize, Clone, Debug, Default, JsonSchema)]
@@ -91,6 +87,18 @@ pub enum JobStatusPhase {
 
 impl Default for JobStatusPhase {
     fn default() -> Self { Self::Pending }
+}
+
+#[derive(Deserialize, Serialize, Clone, Debug, JsonSchema)]
+pub struct TaskSpec {
+    /// Specifies the task name
+    pub name: String,
+
+    /// Specifies the parallelism number of pods
+    pub parallelism: ParallelismSpec,
+
+    /// The pod template
+    pub template: PodTemplate,
 }
 
 #[derive(Deserialize, Serialize, Clone, Debug, Default, JsonSchema)]
