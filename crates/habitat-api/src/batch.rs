@@ -1,6 +1,6 @@
 use kube::CustomResource;
 use schemars::JsonSchema;
-use serde::{Deserialize, Serialize};
+use serde::{de, Deserialize, Serialize};
 
 #[derive(CustomResource, Deserialize, Serialize, Clone, Debug, JsonSchema)]
 #[serde(rename_all = "camelCase")]
@@ -26,13 +26,7 @@ pub struct JobSpec {
     pub scheduler_name: Option<String>,
 
     /// If specified, indicates the Job's priority.
-    pub priority_class_name: Option<String>,
-
-    /// The priority value.
-    ///
-    /// Note that only one of `priority_class_name` or `priority` can be
-    /// specified.
-    pub priority: Option<u32>,
+    pub priority: Option<Priority>,
 
     /// The task specifications.
     pub tasks: Vec<TaskSpec>,
@@ -366,4 +360,103 @@ pub struct ParallelismSpec {
     /// given time.
     #[serde(default = "default_parallelism")]
     pub max: u32,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum Priority {
+    Value(u32),
+    Name(String),
+}
+
+impl Serialize for Priority {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        match self {
+            Priority::Value(v) => serializer.serialize_str(&v.to_string()),
+            Priority::Name(v) => serializer.serialize_str(v),
+        }
+    }
+}
+
+
+impl<'de> Deserialize<'de> for Priority {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        let v: serde_json::Value = serde::Deserialize::deserialize(deserializer)?;
+        let custom_err_msg = "expected an integer between 0 and 2^32 or a valid priority class name";
+        match v {
+            serde_json::Value::Number(num) => {
+                if let Some(v) = num.as_u64().and_then(|v| u32::try_from(v).ok()) {
+                    Ok(Priority::Value(v))
+                } else {
+                    Err(de::Error::custom(custom_err_msg))
+                }
+            }
+            serde_json::Value::String(v) => {
+                if let Ok(v) = v.parse::<u32>() {
+                    Ok(Priority::Value(v))
+                } else if v.parse::<f64>().is_ok() {
+                    Err(de::Error::custom(custom_err_msg))
+                } else {
+                    Ok(Priority::Name(v))
+                }
+            }
+            _ => Err(de::Error::custom(custom_err_msg)),
+        }
+    }
+}
+
+impl JsonSchema for Priority {
+    fn schema_name() -> String { "priority".to_string() }
+
+    fn json_schema(_: &mut schemars::gen::SchemaGenerator) -> schemars::schema::Schema {
+        serde_json::from_value(serde_json::json!({
+            "x-kubernetes-int-or-string": true
+        }))
+        .unwrap()
+    }
+}
+
+
+#[cfg(test)]
+mod test {
+    use super::Priority;
+
+    #[test]
+    fn test_priority_deserialize_sting() {
+        assert_eq!(
+            serde_json::from_str::<Priority>(r#""123""#).unwrap(),
+            Priority::Value(123)
+        );
+        assert!(serde_json::from_str::<Priority>(r#""-123""#).is_err());
+        assert!(serde_json::from_str::<Priority>(r#""123.1""#).is_err());
+
+        assert_eq!(
+            serde_json::from_str::<Priority>(r#""high""#).unwrap(),
+            Priority::Name("high".to_string())
+        );
+    }
+
+    #[test]
+    fn test_priority_deserialize_number() {
+        assert_eq!(
+            serde_json::from_str::<Priority>(r#"123"#).unwrap(),
+            Priority::Value(123)
+        );
+        assert!(serde_json::from_str::<Priority>(r#"-123"#).is_err());
+        assert!(serde_json::from_str::<Priority>(r#"123.1"#).is_err());
+    }
+
+    #[test]
+    fn test_priority_serialization() {
+        assert_eq!(serde_json::to_string(&Priority::Value(123)).unwrap(), r#""123""#);
+        assert_eq!(
+            serde_json::to_string(&Priority::Name("high".to_string())).unwrap(),
+            r#""high""#
+        );
+    }
 }
