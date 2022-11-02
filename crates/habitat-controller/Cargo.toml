@@ -9,3 +9,19 @@ authors = ["ZhengYu Xu <zen-xu@outlook.com>"]
 repository = "https://github.com/zen-xu/habitat"
 
 [dependencies]
+anyhow = "1"
+async-trait = "0.1.58"
+chrono = { version = "0.4.22", features = ["serde"] }
+futures = "0.3"
+habitat-api = { path = "../habitat-api", version = "<1.0.0" }
+kube = { version = "0.76", features = ["runtime", "client", "derive"] }
+serde = "1"
+serde_json = "1"
+thiserror = "1"
+tokio = { version = "1.21", features = ["macros", "rt-multi-thread"] }
+tracing = "0.1"
+
+[dependencies.k8s-openapi]
+version = "0.16.0"
+features = ["v1_24"]
+default-features = false
