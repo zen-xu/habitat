@@ -62,20 +62,20 @@ pub struct JobStatus {
 
 #[derive(Deserialize, Serialize, Clone, Debug, JsonSchema)]
 pub enum JobStatusPhase {
-    // Pending means the job has been accepted by the system, but one or more of pods has not been
-    // scheduled.
+    /// Pending means the job has been accepted by the system, but one or more of pods has not been
+    /// scheduled.
     Pending,
-    // Ready means the scheduler approves the controller to create pods.
+    /// Ready means the scheduler approves the controller to create pods.
     Ready,
-    // Running means that if the job contains any `Running` pod, its status will be `Running`.
+    /// Running means that if the job contains any `Running` pod, its status will be `Running`.
     Running,
-    // Terminating means that the job is terminated, and waiting for releasing pods.
+    /// Terminating means that the job is terminated, and waiting for releasing pods.
     Terminating,
-    // Succeeded means that the job is completed with success.
+    /// Succeeded means that the job is completed with success.
     Succeeded,
-    // Succeeded means that the job is completed with failure.
+    /// Succeeded means that the job is completed with failure.
     Failed,
-    // Terminated means that the job is completed with unexpected.
+    /// Terminated means that the job is completed with unexpected.
     Terminated,
 }
 
