@@ -57,10 +57,5 @@ fn validate(res: AdmissionResponse, obj: &Job) -> Result<AdmissionResponse, Box<
         }
     }
 
-    // Only one of `priority_class_name` or `priority` can be specified.
-    if obj.spec.priority_class_name.is_some() && obj.spec.priority.is_some() {
-        return Err("can't specify both priority and priorityClassName".into());
-    }
-
     Ok(res)
 }
