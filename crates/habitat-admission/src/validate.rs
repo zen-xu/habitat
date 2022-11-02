@@ -1,14 +1,16 @@
 use habitat_api::Job;
 use kube::core::{
     admission::{AdmissionRequest, AdmissionResponse, AdmissionReview},
-    ResourceExt,
+    DynamicObject, ResourceExt,
 };
 use std::{convert::Infallible, error::Error};
 use tracing::*;
 use warp::{reply, Reply};
 
+use crate::util::try_cast_dynamic_obj_into_job;
 
-pub async fn handler(body: AdmissionReview<Job>) -> Result<impl Reply, Infallible> {
+
+pub async fn handler(body: AdmissionReview<DynamicObject>) -> Result<impl Reply, Infallible> {
     // Parse incoming webhook AdmissionRequest first
     let req: AdmissionRequest<_> = match body.try_into() {
         Ok(req) => req,
@@ -25,14 +27,20 @@ pub async fn handler(body: AdmissionReview<Job>) -> Result<impl Reply, Infallibl
     // req.Object always exists for us, but could be None if extending to DELETE events
     if let Some(obj) = req.object {
         let name = obj.name_any(); // apiserver may not have generated a name yet
-        res = match validate(res.clone(), &obj) {
-            Ok(res) => {
-                info!("accepted: {:?} on Job {}", req.operation, name);
-                res
-            }
+        res = match try_cast_dynamic_obj_into_job(&obj) {
+            Ok(job) => match validate(res.clone(), &job) {
+                Ok(res) => {
+                    info!("accepted: {:?} on Job {}", req.operation, name);
+                    res
+                }
+                Err(err) => {
+                    warn!("denied: {:?} on {} ({})", req.operation, name, err);
+                    res.deny(err.to_string())
+                }
+            },
             Err(err) => {
-                warn!("denied: {:?} on {} ({})", req.operation, name, err);
-                res.deny(err.to_string())
+                warn!("invalid job: {:?} on {} ({})", req.operation, name, err);
+                res.deny(err)
             }
         };
     };
