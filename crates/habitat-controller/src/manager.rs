@@ -106,7 +106,7 @@ async fn reconciler(job: Arc<Job>, ctx: Arc<Context>) -> Result<Action> {
 fn error_policy(job: Arc<Job>, error: &Error, ctx: Arc<Context>) -> Action { job.error_policy(error, ctx) }
 
 #[async_trait]
-pub trait Reconciler: ResourceExt {
+pub trait Reconciler: Resource {
     async fn reconcile(&self, ctx: Arc<Context>) -> Result<Action, kube::Error>;
     async fn cleanup(&self, ctx: Arc<Context>) -> Result<Action, kube::Error>;
     fn error_policy(&self, error: &Error, ctx: Arc<Context>) -> Action;
