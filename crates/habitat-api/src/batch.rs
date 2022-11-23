@@ -33,6 +33,7 @@ pub struct JobSpec {
 }
 
 #[derive(Deserialize, Serialize, Clone, Debug, Default, JsonSchema)]
+#[serde(rename_all = "camelCase")]
 pub struct JobStatus {
     /// Job status phase.
     pub phase: JobStatusPhase,
@@ -118,6 +119,7 @@ pub struct PodMeta {
 }
 
 #[derive(Deserialize, Serialize, Clone, Debug, Default, JsonSchema)]
+#[serde(rename_all = "camelCase")]
 pub struct PodSpec {
     /// Optional duration in seconds the pod may be active on the node relative
     /// to StartTime before the system will actively try to mark it failed and
