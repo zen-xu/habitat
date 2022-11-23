@@ -6,7 +6,7 @@ use tracing::*;
 async fn main() -> Result<()> {
     tracing_subscriber::fmt::init();
     let client = kube::Client::try_default().await?;
-    let (manager, controller) = Manager::new(client).await;
+    let (_manager, controller) = Manager::new(client).await;
 
     tokio::select! {
         _ = controller => warn!("controller exited"),
