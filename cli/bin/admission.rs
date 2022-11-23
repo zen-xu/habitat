@@ -1,8 +1,11 @@
 use std::path::PathBuf;
 
+use axum::{
+    routing::{get, post},
+    Router,
+};
+use axum_server::tls_rustls::RustlsConfig;
 use clap::Parser;
-use tracing::*;
-use warp::Filter;
 
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
@@ -31,23 +34,16 @@ async fn main() {
 async fn run(ip_addr: std::net::IpAddr, port: u32, cert_path: PathBuf, key_path: PathBuf) {
     let addr = format!("{}:{}", ip_addr, port);
 
-    let healthy = warp::get().and(warp::path("health")).map(|| "healthy");
+    let app = Router::new()
+        .route("/validate", post(habitat_admission::validate::handler))
+        .route("/mutate", post(habitat_admission::mutate::handler))
+        .layer(tower_http::trace::TraceLayer::new_for_http())
+        // Reminder: routes added *after* TraceLayer are not subject to its logging behavior
+        .route("/health", get(|| async { "healthy" }));
 
-    let mutate = warp::post()
-        .and(warp::path("mutate"))
-        .and(warp::body::json())
-        .and_then(habitat_admission::mutate::handler);
-
-    let validate = warp::post()
-        .and(warp::path("validate"))
-        .and(warp::body::json())
-        .and_then(habitat_admission::validate::handler);
-
-    info!("starting habitat admission controller");
-    warp::serve(healthy.or(mutate).or(validate).with(warp::trace::request()))
-        .tls()
-        .cert_path(cert_path)
-        .key_path(key_path)
-        .run(addr.parse::<std::net::SocketAddr>().unwrap())
-        .await;
+    let config = RustlsConfig::from_pem_file(cert_path, key_path).await.unwrap();
+    axum_server::bind_rustls(addr.parse().unwrap(), config)
+        .serve(app.into_make_service())
+        .await
+        .unwrap();
 }
