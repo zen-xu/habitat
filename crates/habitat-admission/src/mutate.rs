@@ -1,23 +1,23 @@
+use axum::Json;
 use habitat_api::Job;
 use kube::core::{
     admission::{AdmissionRequest, AdmissionResponse, AdmissionReview},
     DynamicObject, ResourceExt,
 };
-use std::{convert::Infallible, error::Error};
+use std::error::Error;
 use tracing::*;
-use warp::{reply, Reply};
 
 use crate::util::try_cast_dynamic_obj_into_job;
 
-pub async fn handler(body: AdmissionReview<DynamicObject>) -> Result<impl Reply, Infallible> {
+pub async fn handler(
+    Json(body): Json<AdmissionReview<DynamicObject>>,
+) -> Json<AdmissionReview<DynamicObject>> {
     // Parse incoming webhook AdmissionRequest first
     let req: AdmissionRequest<_> = match body.try_into() {
         Ok(req) => req,
         Err(err) => {
             error!("invalid request: {}", err.to_string());
-            return Ok(reply::json(
-                &AdmissionResponse::invalid(err.to_string()).into_review(),
-            ));
+            return Json(AdmissionResponse::invalid(err.to_string()).into_review());
         }
     };
 
@@ -45,7 +45,7 @@ pub async fn handler(body: AdmissionReview<DynamicObject>) -> Result<impl Reply,
         };
     };
     // Wrap the AdmissionResponse wrapped in an AdmissionReview
-    Ok(reply::json(&res.into_review()))
+    Json(res.into_review())
 }
 
 // The main handler and core business logic, failures here implies rejected applies
