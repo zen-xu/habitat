@@ -1,6 +1,5 @@
 blank_lines_upper_bound = 2
 comment_width = 110
-fn_single_line = true
 imports_granularity = "Crate"
 inline_attribute_width = 80
 max_width = 110

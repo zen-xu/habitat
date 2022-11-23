@@ -81,7 +81,9 @@ pub enum JobStatusPhase {
 }
 
 impl Default for JobStatusPhase {
-    fn default() -> Self { Self::Pending }
+    fn default() -> Self {
+        Self::Pending
+    }
 }
 
 #[derive(Deserialize, Serialize, Clone, Debug, JsonSchema)]
@@ -350,7 +352,9 @@ pub struct PodSpec {
     pub volumes: Option<Vec<k8s_openapi::api::core::v1::Volume>>,
 }
 
-fn default_parallelism() -> u32 { 1 }
+fn default_parallelism() -> u32 {
+    1
+}
 
 #[derive(Deserialize, Serialize, Clone, Debug, JsonSchema)]
 pub struct ParallelismSpec {
@@ -382,7 +386,6 @@ impl Serialize for Priority {
     }
 }
 
-
 impl<'de> Deserialize<'de> for Priority {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
@@ -413,7 +416,9 @@ impl<'de> Deserialize<'de> for Priority {
 }
 
 impl JsonSchema for Priority {
-    fn schema_name() -> String { "priority".to_string() }
+    fn schema_name() -> String {
+        "priority".to_string()
+    }
 
     fn json_schema(_: &mut schemars::gen::SchemaGenerator) -> schemars::schema::Schema {
         serde_json::from_value(serde_json::json!({
@@ -422,7 +427,6 @@ impl JsonSchema for Priority {
         .unwrap()
     }
 }
-
 
 #[cfg(test)]
 mod test {

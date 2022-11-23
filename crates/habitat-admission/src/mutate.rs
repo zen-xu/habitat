@@ -9,7 +9,6 @@ use warp::{reply, Reply};
 
 use crate::util::try_cast_dynamic_obj_into_job;
 
-
 pub async fn handler(body: AdmissionReview<DynamicObject>) -> Result<impl Reply, Infallible> {
     // Parse incoming webhook AdmissionRequest first
     let req: AdmissionRequest<_> = match body.try_into() {
@@ -50,4 +49,6 @@ pub async fn handler(body: AdmissionReview<DynamicObject>) -> Result<impl Reply,
 }
 
 // The main handler and core business logic, failures here implies rejected applies
-fn mutate(res: AdmissionResponse, _job: &Job) -> Result<AdmissionResponse, Box<dyn Error>> { Ok(res) }
+fn mutate(res: AdmissionResponse, _job: &Job) -> Result<AdmissionResponse, Box<dyn Error>> {
+    Ok(res)
+}
