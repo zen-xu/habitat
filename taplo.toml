@@ -1,0 +1,4 @@
+include = ["crates/*/Cargo.toml", "cli/Cargo.toml"]
+
+[formatting]
+column_width = 110
