@@ -37,7 +37,6 @@ pub struct Context {
     diagnostics: Arc<RwLock<Diagnostics>>,
 }
 
-
 /// Diagnostics to be exposed by the web server
 #[derive(Clone, Serialize)]
 pub struct Diagnostics {
@@ -55,7 +54,6 @@ impl Diagnostics {
         }
     }
 }
-
 
 #[derive(Clone)]
 pub struct Manager {
@@ -93,9 +91,10 @@ impl Manager {
     }
 
     /// State getter
-    pub async fn diagnostics(&self) -> Diagnostics { self.diagnostics.read().await.clone() }
+    pub async fn diagnostics(&self) -> Diagnostics {
+        self.diagnostics.read().await.clone()
+    }
 }
-
 
 async fn reconciler(job: Arc<Job>, ctx: Arc<Context>) -> Result<Action> {
     let client = ctx.client.clone();
@@ -112,7 +111,9 @@ async fn reconciler(job: Arc<Job>, ctx: Arc<Context>) -> Result<Action> {
     .map_err(Error::FinalizerError)
 }
 
-fn error_policy(job: Arc<Job>, error: &Error, ctx: Arc<Context>) -> Action { job.error_policy(error, ctx) }
+fn error_policy(job: Arc<Job>, error: &Error, ctx: Arc<Context>) -> Action {
+    job.error_policy(error, ctx)
+}
 
 #[async_trait]
 pub trait Reconciler: Resource {
@@ -248,7 +249,9 @@ impl Reconciler for Job {
     }
 }
 
-fn new_owned_label(job: &Job) -> String { format!("{}={}", TASK_OWNER_LABEL, job.name_any()) }
+fn new_owned_label(job: &Job) -> String {
+    format!("{}={}", TASK_OWNER_LABEL, job.name_any())
+}
 
 fn build_min_owned_pods(job: &Job) -> Vec<Pod> {
     let mut pods = vec![];

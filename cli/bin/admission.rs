@@ -4,7 +4,6 @@ use clap::Parser;
 use tracing::*;
 use warp::Filter;
 
-
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
 struct Args {
