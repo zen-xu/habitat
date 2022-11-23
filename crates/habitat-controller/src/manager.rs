@@ -24,9 +24,9 @@ use serde::Serialize;
 use tokio::{sync::RwLock, time::Duration};
 use tracing::{info, warn};
 
-static FINALIZER_NAME: &str = "controller.batch.habitat";
-static TASK_OWNER_LABEL: &str = "habitat-task-owner";
-static TASK_NAME_LABEL: &str = "habitat-task";
+const FINALIZER_NAME: &str = "controller.batch.habitat";
+const TASK_OWNER_LABEL: &str = "habitat-task-owner";
+const TASK_NAME_LABEL: &str = "habitat-task";
 
 // Context for our reconciler
 #[derive(Clone)]
