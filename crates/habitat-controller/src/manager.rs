@@ -25,7 +25,7 @@ use tokio::{sync::RwLock, time::Duration};
 use tracing::{info, warn};
 
 static FINALIZER_NAME: &str = "controller.batch.habitat";
-static JOB_OWNER_LABEL: &str = "habitat-job-owner";
+static TASK_OWNER_LABEL: &str = "habitat-task-owner";
 static TASK_NAME_LABEL: &str = "habitat-task";
 
 // Context for our reconciler
@@ -248,7 +248,7 @@ impl Reconciler for Job {
     }
 }
 
-fn new_owned_label(job: &Job) -> String { format!("{}={}", JOB_OWNER_LABEL, job.name_any()) }
+fn new_owned_label(job: &Job) -> String { format!("{}={}", TASK_OWNER_LABEL, job.name_any()) }
 
 fn build_min_owned_pods(job: &Job) -> Vec<Pod> {
     let mut pods = vec![];
@@ -269,7 +269,7 @@ fn build_min_owned_pods(job: &Job) -> Vec<Pod> {
                 .as_ref()
                 .and_then(|d| d.labels.clone())
                 .unwrap_or_default();
-            labels.insert(JOB_OWNER_LABEL.to_string(), job.name_any());
+            labels.insert(TASK_OWNER_LABEL.to_string(), job.name_any());
             labels.insert(TASK_NAME_LABEL.to_string(), task.name.clone());
             let name = format!("{}-{}", task.name, i);
 
