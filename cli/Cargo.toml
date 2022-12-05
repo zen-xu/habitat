@@ -14,7 +14,7 @@ habitat-api = { path = "../crates/habitat-api", version = "<1.0.0" }
 habitat-controller = { path = "../crates/habitat-controller", version = "<1.0.0" }
 
 # third party dependencies
-axum = "0.5"
+axum = "0.6"
 axum-server = { version = "0.4", features = ["tls-rustls"] }
 anyhow = "1"
 clap = { version = "4", features = ["derive"] }
